@@ -12,6 +12,6 @@ namespace portfoliobackend
 
         void DeleteStock(string ticker);
 
-        StockModel GetStock(string ticker);
+        List<StockModel> GetStock(string ticker);
     }
 }
