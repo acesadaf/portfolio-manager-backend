@@ -37,15 +37,22 @@ namespace portfoliobackend.Controllers
         //};
 
         // GET api/stocks/amzn
-        [HttpGet("{ticker}")]
-        public ActionResult<StockModel> Get(string ticker)
+        [HttpGet()]
+        public ActionResult<List<StockModel>> GetAll()
         {
-            var stock = _dataStore.GetStock(ticker);
-            if (stock != null)
-            {
-                return stock;
-            }
+            return _dataStore.GetStock(string.Empty);
+            //return stock 
+            //if (stock != null)
+            //{
+            //    return stock;
+            //}
 
+            //return NotFound();
+        }
+
+        [HttpGet("{ticker}")]
+        public ActionResult<List<StockModel>> Get(string ticker)
+        {
             return NotFound();
         }
 
