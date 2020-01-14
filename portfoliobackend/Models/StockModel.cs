@@ -16,5 +16,8 @@ namespace portfoliobackend.Models
         public double Quantity { get; set; }
 
         public DateTime PurchaseDate  { get; set; }
+
+        public string CompanyName { get; set; }
+        public double CurrentPrice { get; set; }
     }
 }
