@@ -20,6 +20,7 @@ namespace portfoliobackend
         private IDictionary<int, string> _id2Ticker;
         private readonly IDictionary<int, string> inverseTickerMap;
         public static string queriedCompanyName = "none";
+        public static double queriedCompanyPrice = 0;
         public static bool FetchDone = false; 
 
 
@@ -48,7 +49,7 @@ namespace portfoliobackend
         public static async void GetStockData(string ticker)
         {
             Console.WriteLine("HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-            string baseURL = $"https://api.worldtradingdata.com/api/v1/stock?symbol={ticker}&api_token=bjCQZehivMrxyXf3rdFPqlhJETgaMkZ6swcWakwi4q9I2mQwBFkbKfHUCL7Z";
+            string baseURL = $"https://api.worldtradingdata.com/api/v1/stock?symbol={ticker}&api_token=WwG42fcH0mrQapxcera6JlzsQMdFO4XVDrAW2QsBTvsyNgEHTIcRBEHdWO0b";
             try
             {
                 using (HttpClient client = new HttpClient())
@@ -67,6 +68,7 @@ namespace portfoliobackend
                                 MyApiData thisStock = new MyApiData(ticker: (string)dataObj.SelectToken("data[0].symbol"), companyName: (string)dataObj.SelectToken("data[0].name"), price: Convert.ToDouble((string)dataObj.SelectToken("data[0].price")));
                                 Console.WriteLine("Pokemon Name: {0}", thisStock.CompanyName);
                                 queriedCompanyName = thisStock.CompanyName;
+                                queriedCompanyPrice = thisStock.Price;
                                 //queriedCompanyName = "NETFLIX";
                             }
                             else
@@ -141,13 +143,22 @@ namespace portfoliobackend
                     var reader = sqlCmd.ExecuteReader();
                     while(reader.Read())
                     {
+                        string Ticker = _id2Ticker[reader.GetInt32("StockId")];
+                        GetStockData(Ticker);
+                        while (FetchDone != true)
+                        {
+
+                        }
+                        FetchDone = false;
                         stockList.Add(new StockModel
                         {
                             PurchaseDate = reader.GetDateTime("PurchaseDate"),
                             PurchasePrice = reader.GetDouble("PurchasePrice"),
                             Ticker = _id2Ticker[reader.GetInt32("StockId")],
-                            Quantity = reader.GetDouble("Qty")
-                        }) ;
+                            Quantity = reader.GetDouble("Qty"),
+                            CompanyName = queriedCompanyName,
+                            CurrentPrice = queriedCompanyPrice
+                }) ;
                     }
 
                     return stockList;
