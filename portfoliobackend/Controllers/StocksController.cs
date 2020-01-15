@@ -69,5 +69,12 @@ namespace portfoliobackend.Controllers
 
             return stockModel;
         }
+        [HttpDelete()]
+        public ActionResult<StockModel> Delete([FromBody] StockModel stockModel)
+        {
+            _dataStore.DeleteStock(stockModel);
+
+            return stockModel;
+        }
     }
 }
