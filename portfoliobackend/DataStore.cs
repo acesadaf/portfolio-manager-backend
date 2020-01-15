@@ -16,6 +16,7 @@ namespace portfoliobackend
         private static readonly string readCommand = "SELECT * FROM StockData WHERE UserId = 2";
         private static readonly string writeCommand = "INSERT INTO StockData(StockId, UserId, Qty, PurchasePrice, PurchaseDate) values (@stockId, @userId, @qty, @purchasePrice, @purchaseDate)";
         private static readonly string addToMapCommand = "INSERT INTO stockmap(CompanyName, Ticker) values (@CompanyName, @Ticker)";
+        private static readonly string deleteCommand = "DELETE FROM StockData WHERE StockId = @stockId and UserId = @userId and Qty = @qty and PurchasePrice = @purchasePrice and PurchaseDate = @purchaseDate";
         private IDictionary<string, StockMap> _tickerMap;
         private IDictionary<int, string> _id2Ticker;
         private readonly IDictionary<int, string> inverseTickerMap;
@@ -129,9 +130,24 @@ namespace portfoliobackend
                 writeCommand);
         }
 
-        public void DeleteStock(string ticker)
+        public void DeleteStock(StockModel stockModel)
         {
-            throw new NotImplementedException();
+            _ = ExecuteSqlCommand(
+               sqlCmd =>
+               {
+                  
+                    var stockId = _tickerMap[stockModel.Ticker].StockId;
+                   
+
+                   sqlCmd.Parameters.Add(new MySqlParameter("@stockId", MySqlDbType.Int32) { Value = stockId });
+                   sqlCmd.Parameters.Add(new MySqlParameter("@userId", MySqlDbType.Int32) { Value = stockModel.UserId });
+                   sqlCmd.Parameters.Add(new MySqlParameter("@qty", MySqlDbType.Double) { Value = stockModel.Quantity });
+                   sqlCmd.Parameters.Add(new MySqlParameter("@purchasePrice", MySqlDbType.Double) { Value = stockModel.PurchasePrice });
+                   sqlCmd.Parameters.Add(new MySqlParameter("@purchaseDate", MySqlDbType.DateTime) { Value = stockModel.PurchaseDate });
+
+                   return sqlCmd.ExecuteNonQuery();
+               },
+               deleteCommand);
         }
 
         public List<StockModel> GetStock(string ticker)

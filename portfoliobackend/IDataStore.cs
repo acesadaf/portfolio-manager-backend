@@ -10,7 +10,7 @@ namespace portfoliobackend
     {
         void AddStock(StockModel stockModel);
 
-        void DeleteStock(string ticker);
+        void DeleteStock(StockModel stockModel);
 
         List<StockModel> GetStock(string ticker);
     }
